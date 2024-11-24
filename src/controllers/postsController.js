@@ -16,7 +16,7 @@ export async function listarPost(req, res) {
 };
 getPost
 
-//controlador da chamada da função criarPost dentro de um try e retorna o resultado.
+//controlador da chamada da função criarPost sem enviar a imagem e retorna o resultado.
 export async function novoPost(req, res) {
     const novo_post = req.body;
     console.log("Dados: ", novo_post);
@@ -29,13 +29,32 @@ export async function novoPost(req, res) {
     };
 };
 
-//inserir imagem no banco de dados e renomeá-la de acordo com um id
+//controlador da chamada da função que insere imagem no banco de dados e renomeia de acordo com um id
 export async function uploadImagem(req, res) {
     try {
         const id = req.params.id;
         const imagem_atualizada = `uploads/${id}.png`;
         fs.renameSync(req.file.path, imagem_atualizada);
         res.status(200).json(imagem_atualizada);
+    } catch(erro) {
+        console.error(erro.message);
+        res.status(500).json({"Erro":"Falha na requisição."});
+    };
+};
+
+//controlador da chamada da função criarPost com a imagem e retorna o resultado.
+export async function novoPostComImagem(req, res) {
+    try {
+        const imageBuffer = fs.readFileSync(req.file.path)
+        const descricao = await gerarDescricaoComGemini(imageBuffer);
+        const novo_post = {
+            descricao: descricao,
+            alt: descricao,
+        }
+        const post_criado = await criarPost(novo_post);
+        const imagem_atualizada = `uploads/${post_criado.insertedId}.png`;
+        fs.renameSync(req.file.path, imagem_atualizada);
+        res.status(200).json(post_criado);
     } catch(erro) {
         console.error(erro.message);
         res.status(500).json({"Erro":"Falha na requisição."});
