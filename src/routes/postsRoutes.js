@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import cors from "cors";
-import { listarPosts, novoPost, uploadImagem, atualizaNovoPost} from "../controllers/postsController.js";
+import { listarPosts, listarPost, novoPost, uploadImagem, atualizaNovoPost} from "../controllers/postsController.js";
 
 const corsOptions = {
     origin: "http:localhost:8000",
@@ -22,8 +22,9 @@ const upload = multer({ dest: "./uploads" , storage});
 //caminhos (rotas) para cada função.
 const routes = (app) => {
     app.use(express.json());
-    app.use(corsOptions);
+    app.use(cors(corsOptions));
     app.get("/posts", listarPosts);
+    app.get("/post", listarPost);
     app.post("/posts", novoPost);
     app.post("/upload", upload.single("imagem"), uploadImagem);
     app.put("/upload/:id", atualizaNovoPost);
