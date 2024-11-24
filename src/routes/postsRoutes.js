@@ -27,7 +27,7 @@ const routes = (app) => {
     app.get("/post", listarPost);
     app.post("/posts", novoPost);
     app.post("/upload", upload.single("imagem"), uploadImagem);
-    app.post("/upload", upload.single("imagem"), novoPostComImagem);
+    app.post("/up", upload.single("imagem"), novoPostComImagem);
     app.put("/upload/:id", atualizaNovoPost);
 };
 
